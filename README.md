@@ -56,12 +56,14 @@ prometheus-flask-exporter
 1. Implementação do Dockerfile
 
 ![dockerfile](https://github.com/gustavogss/task-manager/blob/main/images/dockerfile.png)
+
 <br />
 
 
-2. Aplicação executada:
+2. Aplicação executada na porta 5000:
 
 ![app](https://github.com/gustavogss/task-manager/blob/main/images/app.png)
+
 <hr>
 
 
@@ -70,6 +72,7 @@ prometheus-flask-exporter
 1. Implementação do build e deploy na pipeline
 
 ![gitlab](https://github.com/gustavogss/task-manager/blob/main/images/gitlabci.png)
+
 <br />
 
 2. Pipeline em execução no gitlab:
@@ -84,11 +87,13 @@ prometheus-flask-exporter
 1. Implementação do Bandit na pipeline:
 
 ![bandit](https://github.com/gustavogss/task-manager/blob/main/images/bandit.png)
+
 <br />
 
 2. Artefato gerado mostrando dados sensíveis expostos na aplicação:
 
 ![artfect-bandit](https://github.com/gustavogss/task-manager/blob/main/images/bandit-artifect.png)
+
 <br />
 
 3. Correção no código da falha capturada pelo Bandit:
@@ -100,6 +105,7 @@ prometheus-flask-exporter
 4. Implementação do OWASP Dependency Check na pipeline:
 
 ![owasp-dependency-check](https://github.com/gustavogss/task-manager/blob/main/images/owasp-dependecy-check.png)
+
 <br />
 
 5. Artefato gerado com vulnerabilidades no código javascript:
@@ -112,6 +118,7 @@ prometheus-flask-exporter
 1. Foi utilizada a aplicação Zed Attack Proxy (ZAP) para fazer uma varredura rápida na aplicação:
 
  ![zed](https://github.com/gustavogss/task-manager/blob/main/images/zap-attack-tools.png)
+ 
   <br />
   
 2. Artefato gerado mostrando as vulnerabilidades e níveis de risco:
@@ -124,11 +131,13 @@ prometheus-flask-exporter
 1. Implementação da etapa revisão de código na pipeline:
 
 ![review](https://github.com/gustavogss/task-manager/blob/main/images/review-pipeline.png)
+
 <br />
    
 2. Implementação do OWASP ZAP para executar em toda pipeline na homologação: 
 
 ![owasp-zap](https://github.com/gustavogss/task-manager/blob/main/images/dast.png)
+
 <hr>
 
 
@@ -137,6 +146,7 @@ prometheus-flask-exporter
 1. Implementação do Prometheus e Grafana na produção:
 
 ![prometehues-grafana](https://github.com/gustavogss/task-manager/blob/main/images/grafana-prometheus.png)
+
 <br />
    
 2. Implementação do ataque de bruta force em python:
