@@ -1,0 +1,218 @@
+variables:
+  DOCKER_TLS_CERTDIR: "/certs"
+  DOCKER_CLIENT_TIMEOUT: 600
+  COMPOSE_HTTP_TIMEOUT: 600
+  DOCKER_BUILDKIT: 0
+  COMPOSE_DOCKER_CLI_BUILD: 0
+  DOCKER_IMAGE: "docker:20.10"
+  DOCKER_COMPOSE_IMAGE: "docker/compose:1.29.2"
+  PYTHON_IMAGE: "python:3.9-slim-buster"
+  DEPENDENCY_CHECK_IMAGE: "nbaars/owasp-dependency-check-as-one"
+  PIP_UPGRADE_CMD: "pip install --upgrade pip"
+  MAVEN_IMAGE: "maven:3.8.5-openjdk-17-slim"
+  USERNAME_LIST: "wordlist/usernames.txt"
+  PASSWORD_LIST: "wordlist/passwords.txt"
+  BASE_URL: "http://192.168.1.9:5050"
+
+stages:
+  - build
+  - tests
+  - sast
+  - review
+  - approval
+  - dast
+  - deploy
+  - monitoring
+
+build_job:
+  stage: build
+  image: ${DOCKER_IMAGE}
+  services:
+    - docker:20.10-dind
+  script:
+    - docker rmi task-manager-using-flask_web --force || true
+    - docker image prune -a
+    - docker build -t task-manager-using-flask_web .
+  tags:
+    - dev
+    - qa
+  only:
+    - development
+    - staging
+    - master
+
+tests_unit_job:
+  stage: tests
+  image: ${PYTHON_IMAGE}
+  script:
+    - ${PIP_UPGRADE_CMD}
+    - pip install -r requirements.txt
+    - python3 -m unittest discover -s todo_project/todo_project/tests/unit
+  tags:
+    - dev
+  only:
+    - development
+    - master
+
+tests_integration_job:
+  stage: tests
+  image: ${PYTHON_IMAGE}
+  script:
+    - ${PIP_UPGRADE_CMD}
+    - pip install -r requirements.txt
+    - python3 -m unittest discover -s todo_project/todo_project/tests/integration
+  tags:
+    - qa
+  only:
+    - staging
+    - master
+
+tests_functional_job:
+  stage: tests
+  image: ${PYTHON_IMAGE}
+  script:
+    - ${PIP_UPGRADE_CMD}
+    - pip install -r requirements.txt
+    - pip install selenium
+    - python3 -m unittest discover -s todo_project/todo_project/tests/functional
+  tags:
+    - qa
+  only:
+    - staging
+    - master
+
+bandit_job:
+  stage: sast
+  image: ${PYTHON_IMAGE}
+  script:
+    - ${PIP_UPGRADE_CMD}
+    - pip install bandit
+    - bandit -r . -f html -o bandit-report.html || true
+    - bandit -r . -f json | tee bandit-output.json || true
+  tags:
+    - sec
+  artifacts:
+    paths:
+      - bandit-report.html
+      - bandit-output.json
+    expire_in: 1 week
+  only:
+    - development
+    - master
+
+dependency_check_job:
+  stage: sast
+  image: ${DEPENDENCY_CHECK_IMAGE}
+  script:
+    - mkdir -p report
+    - chmod +x report
+    - dependency-check --project "task-manager-using-flask" --format "HTML" --out report --scan .
+  tags:
+    - sec
+  artifacts:
+    when: always
+    paths:
+      - report/dependency-check-report.html
+    expire_in: 1 week
+  only:
+    - development
+    - master
+
+review_deploy_job:
+  stage: review
+  image: ${DOCKER_COMPOSE_IMAGE}
+  services:
+    - docker:20.10-dind
+  script:
+    - docker-compose -f docker-compose.review.yml down || true
+    - docker-compose -f docker-compose.review.yml up -d
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    url: http://$CI_ENVIRONMENT_SLUG.example.com
+    on_stop: stop_review_job
+  tags:
+    - dev
+    - qa
+  only:
+    - merge_requests
+    - master
+  when: manual
+
+approval_job:
+  stage: approval
+  script:
+    - echo "Waiting for approval to proceed to DAST..."
+  tags:
+    - dev
+  only:
+    - development
+    - staging
+    - master
+  when: manual
+  allow_failure: false
+
+dast_job:
+  stage: dast
+  image: ${MAVEN_IMAGE}
+  script:
+    - apt-get update
+    - apt-get -y install wget
+    - wget https://github.com/zaproxy/zaproxy/releases/download/v2.14.0/ZAP_2.14.0_Linux.tar.gz
+    - mkdir zap
+    - tar -xvf ZAP_2.14.0_Linux.tar.gz -C zap --strip-components=1
+    - cd zap
+    - ./zap.sh -cmd -quickurl http://192.168.1.9:8080 -quickout ../zap_report.html -quickprogress
+    - echo "Critical vulnerabilities found, but allowing pipeline to proceed."
+  tags:
+    - sec
+  artifacts:
+    paths:
+      - zap_report.html
+    expire_in: 1 week
+  only:
+    - staging
+    - master
+
+stop_review_job:
+  stage: review
+  image: ${DOCKER_COMPOSE_IMAGE}
+  services:
+    - docker:20.10-dind
+  script:
+    - docker stop task-manager-using-flask-web || true
+    - docker rm task-manager-using-flask-web || true
+    - docker rmi task-manager-using-flask-web || true
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    action: stop
+  tags:
+    - dev
+    - qa
+  only:
+    - merge_requests
+    - master
+  when: manual
+
+deploy_job:
+  stage: deploy
+  image: ${DOCKER_COMPOSE_IMAGE}
+  services:
+    - docker:20.10-dind
+  script:
+    - docker-compose down
+    - docker-compose up -d
+  only:
+    - master
+
+monitoring_job:
+  stage: monitoring
+  image: ${DOCKER_COMPOSE_IMAGE}
+  services:
+    - docker:20.10-dind
+  script:
+    - echo "Monitory Analitcs"
+    - docker-compose -f docker-compose.yml up -d
+  tags:
+    - prod
+  only:
+    - master

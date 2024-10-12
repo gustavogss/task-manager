@@ -1,0 +1,29 @@
+groups:
+  - name: security-alerts
+    rules:
+      - alert: PossibleBruteForceAttack
+        expr: increase(failed_login_attempts[5m]) > 10
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Possible brute force attack detected"
+          description: "More than 10 login failures in 5 minutes detected. Possible brute force attack."
+
+      - alert: MultipleFailedLoginForSingleUser
+        expr: increase(failed_login_attempts_by_user[5m]) > 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Multiple login failures for the same user"
+          description: "User {{ $labels.username }} failed more than 5 login attempts within 5 minutes. Could be a brute force attack."
+
+      - alert: MultipleFailedLoginFromDifferentIPs
+        expr: count_over_time(failed_login_attempts_by_ip[5m]) > 20
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Multiple login failures from different IPs"
+          description: "More than 20 login failures from different IPs detected in 10 minutes. Could be a distributed brute force attack."
