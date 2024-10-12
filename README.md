@@ -179,7 +179,9 @@ done < "$USERNAMES"
    
 2. Foi corrigida uma das vulnerabilidades críticas capturada pelo bandit;
    
-3. A pipeline foi testada de ponta a ponta, do desenvolvimento a homologação e produção:
+3. Testes funcionais e de integração foram implementados na etapa de homologação 
+   
+4. A pipeline foi testada de ponta a ponta, do desenvolvimento a homologação e produção:
 
 ![pipeline-full](https://github.com/gustavogss/task-manager/blob/main/images/pipeline-finished.png)
 
