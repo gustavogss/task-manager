@@ -175,7 +175,7 @@ done < "$USERNAMES"
 
 ### ETAPA 8: FEEDBACKS
 
-1. A aplicação era antiga e precisou que algumas bibliotecas fossem atualizadas;
+1. A aplicação é antiga e precisou que algumas bibliotecas fossem atualizadas;
    
 2. Foi corrigida uma das vulnerabilidades críticas capturada pelo bandit;
    
