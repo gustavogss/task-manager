@@ -1,5 +1,3 @@
-## Criação, Implementação e Segurança de um Sistema de Gerenciamento de Tarefas
-
 ## NTRODUÇÃO
 
 Este estudo de caso se refere a implementação e segurança de um sistema de gerenciamento de tarefas pessoais, integrando processos de SDLC, DevOps e DevSecOps para garantir eficiência e segurança.
