@@ -1,6 +1,7 @@
-## NTRODUÇÃO
+## INTRODUÇÃO
 
 Este estudo de caso se refere a implementação e segurança de um sistema de gerenciamento de tarefas pessoais, integrando processos de SDLC, DevOps e DevSecOps para garantir eficiência e segurança.
+<hr>
 
 
 ### ETAPA 1: PLANEJAMENTO E DEFINIÇÃO DE REQUISITOS
@@ -25,29 +26,58 @@ prometheus-flask-exporter
 2. Construir o Diagrama para entender o dominio do problema:
 
 ![DFD](https://github.com/gustavogss/task-manager/blob/main/images/dfd.png)
-
-<br />
+<hr>
 
 ### ETAPA 2: DESENVOLVIMENTO DO SISTEMA
 
-***Workflow***: Foram criadas três ramificações - master para produção, development para desenvolvimento e staging para homologação 
+***Branchs***: 
+- master: produção
+- development: desenvolvimento
+- staging: homologação
 
-***Ferramentas Utilizadas***: Visual Studio Code, Gitlab, Docker, Pytest, Unittest, Bandit e OWASP Dependency-Check (SAST), OWASP ZAP (DAST), Hydra (Bruta Force), Prometheus e Grafana. 
+
+***Ferramentas Utilizadas***: 
+- Visual Studio Code
+- Gitlab
+- Docker
+- Python
+- Pytest
+- Unittest
+- Zed Attack Proxy
+- Bandit
+- OWASP Dependency-Check
+- OWASP ZAP
+- Hydra 
+- Prometheus
+- Grafana
+  
 <br />
 
 1. Implementação do Dockerfile
 
 ![dockerfile](https://github.com/gustavogss/task-manager/blob/main/images/dockerfile.png)
 <br />
-#### Aplicação executada:
+
+
+2. Aplicação executada:
 
 ![app](https://github.com/gustavogss/task-manager/blob/main/images/app.png)
-<br />
+<hr>
+
 
 ### ETAPA3: IMPLEMENTAÇÃO DE UM PIPELINE CI/CD
 
+1. Implementação do build e deploy na pipeline
+
 ![gitlab](https://github.com/gustavogss/task-manager/blob/main/images/gitlabci.png)
 <br />
+
+2. Pipeline em execução no gitlab:
+
+![pipeline-inital](https://github.com/gustavogss/task-manager/blob/main/images/pipeline-initial.png)
+
+<hr>
+
 
 ### ETAPA 4: ANÁLISE ESTÁTICA DE CÓDIGO (SAST)
 
@@ -75,7 +105,7 @@ prometheus-flask-exporter
 5. Artefato gerado com vulnerabilidades no código javascript:
 
 ![artfect-dependency](https://github.com/gustavogss/task-manager/blob/main/images/artifect-dependency-check.png)
-<br />
+<hr>
 
 ### ETAPA 5: ANÁLISE DINÂMICA DE SEGURANÇA  (DAST)
 
@@ -87,7 +117,7 @@ prometheus-flask-exporter
 2. Artefato gerado mostrando as vulnerabilidades e níveis de risco:
 
 ![artefact-zed](https://github.com/gustavogss/task-manager/blob/main/images/artefact-zap-attack-tools.png)
-<br />
+<hr>
 
 ### ETAPA 6: ENTREGA CONTÍNUA (CD)
 
@@ -99,7 +129,7 @@ prometheus-flask-exporter
 2. Implementação do OWASP ZAP para executar em toda pipeline na homologação: 
 
 ![owasp-zap](https://github.com/gustavogss/task-manager/blob/main/images/dast.png)
- <br />
+<hr>
 
 
 ### ETAPA 7: MONITORAMENTO
@@ -141,7 +171,7 @@ done < "$USERNAMES"
 3. Acompanhamento pelo Grafana com o ataque de bruta force em execução na rota de login:
 
 ![monitory](https://github.com/gustavogss/task-manager/blob/main/images/monitory.png)
-<br />
+<hr>
 
 ### ETAPA 8: FEEDBACKS
 
